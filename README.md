@@ -1,7 +1,7 @@
 # Punto-de-Venta-POS-
 Prototipo escalable de un sistema de punto de venta
 
-
+# Diseño base de datos
 ```mermaid 
 erDiagram
 
@@ -162,4 +162,76 @@ erDiagram
     CASH_REGISTERS ||--o{ CASH_CLOSINGS : has
     USERS ||--o{ CASH_CLOSINGS : performs
 
+```
+
+# Diagrama de flujo
+```mermaid
+flowchart TD
+
+    A[Inicio del Sistema] --> B[Login Usuario]
+
+    B --> C{Credenciales válidas?}
+    C -- No --> B
+    C -- Sí --> D[Obtener Roles y Permisos]
+
+    D --> E[Mostrar Dashboard según permisos]
+
+    E --> F{Seleccionar módulo}
+
+    %% INVENTARIO
+    F -->|Inventario| G[Gestionar Productos]
+    G --> G1[Crear / Editar Producto]
+    G1 --> G2[Guardar en BD]
+    G2 --> E
+
+    %% PROVEEDORES
+    F -->|Proveedores| H[Gestionar Proveedores]
+    H --> H1[Crear / Editar Proveedor]
+    H1 --> H2[Guardar en BD]
+    H2 --> E
+
+    %% CAJA
+    F -->|Caja| I{Caja abierta?}
+    I -- No --> J[Abrir Caja]
+    J --> J1[Insertar cash_closing status=open]
+    J1 --> E
+    I -- Sí --> E
+
+    %% VENTAS
+    F -->|Ventas| K[Crear Nueva Venta]
+
+    K --> L[Agregar Productos]
+    L --> M[Buscar Producto]
+    M --> N[Verificar Variante]
+    N --> O[Verificar Oferta Activa]
+    O --> P[Calcular Precio Final]
+    P --> L
+
+    L --> Q{Confirmar Venta?}
+    Q -- No --> L
+    Q -- Sí --> R[Insertar en SALES]
+    R --> S[Insertar en SALE_ITEMS]
+    S --> T[Descontar Stock]
+
+    T --> U{Pago en efectivo?}
+    U -- Sí --> V[Insertar CASH_MOVEMENT ingreso]
+    U -- No --> W[Registrar pago sin afectar caja]
+
+    V --> X[Imprimir Boleta]
+    W --> X
+    X --> E
+
+    %% CIERRE DE CAJA
+    F -->|Cerrar Caja| Y[Calcular Total Sistema]
+    Y --> Z[Comparar con Caja Física]
+    Z --> AA[Actualizar CASH_CLOSING status=closed]
+    AA --> E
+
+    %% REPORTES
+    F -->|Reportes| BB[Generar Reportes]
+    BB --> E
+
+    %% LOGOUT
+    E --> CC[Cerrar Sesión]
+    CC --> A
 ```
