@@ -180,13 +180,13 @@ flowchart TD
 
     %% INVENTARIO
     F -->|Inventario| G[Gestionar Productos]
-    G --> G1[Crear / Editar Producto]
+    G --> G1[Crear / Editar Producto / Borrar]
     G1 --> G2[Guardar en BD]
     G2 --> E
 
     %% PROVEEDORES
     F -->|Proveedores| H[Gestionar Proveedores]
-    H --> H1[Crear / Editar Proveedor]
+    H --> H1[Crear / Editar Proveedor / Borrar]
     H1 --> H2[Guardar en BD]
     H2 --> E
 
